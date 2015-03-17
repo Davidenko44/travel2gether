@@ -5,17 +5,18 @@
 	<title>NS train planner</title>
 	<link rel="stylesheet" type="text/css" href="css/style.css">
 	<script type="text/JavaScript" src="js/main.js"></script>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 </head>
 
 <body>
-<form onclick="submitfunction()" method="post" id="NSForm">
+<form onsubmit="submitfunction();return false;" method="post" id="NSForm">
 	<div id="title">Train Planning</div>
 	<div class="row"><label class="col1">From:&nbsp;&nbsp;</label>
-		<span class="col2"><input name="from" class="input" type="text" id="name" size="20" tabindex="1"></span>
+		<span class="col2"><input name="from" class="input" type="text" id="from" size="20" tabindex="1"></span>
 	</div>
 	
 	<div class="row"><label class="col1">To:&nbsp;&nbsp;</label>
-		<span class="col2"><input name="email" class="input" type="text" id="email" size="20" tabindex="2"></span>
+		<span class="col2"><input name="to" class="input" type="text" id="to" size="20" tabindex="2"></span>
 	</div>
 	
 	<div align="center" class="submit"><input type="image" src="img/b_send.gif" alt="send" width="52" height="19" border="0">
