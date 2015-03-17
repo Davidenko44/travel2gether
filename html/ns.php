@@ -4,10 +4,12 @@
 <head>
 	<title>NS train planner</title>
 	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<script type="text/JavaScript" src="js/main.js"></script>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 </head>
 
 <body>
-<form action="php/travel.php" method="post">
+<form action="php/travel.php" method="post" id="NSForm">
 	<div id="title">Train Planning</div>
 	<div class="row"><label class="col1">From:&nbsp;&nbsp;</label>
 		<span class="col2"><input name="from" class="input" type="text" id="from" size="20" tabindex="1"></span>
