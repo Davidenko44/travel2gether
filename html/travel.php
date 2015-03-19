@@ -18,9 +18,16 @@ if (!$conn) {
 <head>
 	<title>NS train planner</title>
 	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<script src="http://maps.googleapis.com/maps/api/js"></script>
+	<script src="js/visualize.js"></script>
+	<script type="text/javascript">
+		function findRoute() {
+			calcRoute('<?=$_POST['from']?>', '<?=$_POST['to']?>');
+		}
+	</script>
 </head>
 
-<body>
+<body onload="initialize();findRoute();">
 	<table>
 		<thead>
 			<tr>
@@ -102,10 +109,6 @@ function travelAdvice($from, $to) {
 					?>
 				</form>
 				</td>
-
-
-				<!-- ROBIN: hier kun je aan de hand van $travelOption en zijn values de ritten vinden (en dus de vrienden) -->
-				<!-- met het uitvoeren van var_dump($travelOption); kun je zien welke values hij heeft -->
 			</tr>
 		<?php
 		}
@@ -123,9 +126,9 @@ if(isset($_POST['plannen'])){
 }
 
 travelAdvice(getStationCodeByName($_POST['from']), getStationCodeByName($_POST['to']));
-
 ?>
 		</tbody>
 	</table>
+	<div id="googleMap" style="width:500px;height:380px;"></div>
 </body>
 </html>
