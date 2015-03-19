@@ -1,3 +1,17 @@
+<?php
+$servername = "localhost";
+$username = "root";
+$password = "social";
+$dbname = "socialweb";
+
+// Create connection
+$conn = mysqli_connect($servername, $username, $password, $dbname);
+// Check connection
+if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
+}
+?>
+
 <!DOCTYPE HTML>
 <html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
 
@@ -15,6 +29,7 @@
 				<th>VertrekTijd</th>
 				<th>AankomstTijd</th>
 				<th>Vrienden op deze rit</th>
+				<th>Plannen</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -43,6 +58,10 @@ function getStationCodeByName($station) {
 	return $result;
 }
 
+function test(){
+	echo "<script>console.log('hi')</script>";
+}
+
 function travelAdvice($from, $to) {
 	$ch = curl_init();
 	curl_setopt($ch, CURLOPT_URL, "http://webservices.ns.nl/ns-api-treinplanner?fromStation=".$from."&toStation=".$to."");
@@ -61,12 +80,45 @@ function travelAdvice($from, $to) {
 				<td><?php echo $travelOption->ActueleReisTijd ?></td>
 				<td><?php echo date_format(date_create($travelOption->ActueleVertrekTijd), 'H:i') ?></td>
 				<td><?php echo date_format(date_create($travelOption->ActueleAankomstTijd), 'H:i') ?></td>
-				
+				<td> 				<?				
+				echo $travelOption->ReisDeel->RitNummer;
+				if(count($travelOption->ReisDeel) > 1){
+					echo $travelOption->ReisDeel[1]->RitNummer;
+				}
+				?> </td>
+				<td>
+				<form method="POST" action="travel.php">
+					<input type="submit" class="button" name="plannen" id="plannen" value="Plannen"/>
+					<input type="hidden" name="from" id="from" value="<? echo $_POST[from];?>"/>
+					<input type="hidden" name="to" id="to" value="<? echo $_POST['to'];?>"/>
+					<input type="hidden" name="parts" id="parts" value="<? echo $travelOption->AantalOverstappen+1;?>"/>
+					<?
+					$counter = 0;
+					foreach($travelOption->ReisDeel as $reisDeel){?>
+						<input type="hidden" name="tripID<?echo $counter?>" id="tripID<?echo $counter?>" value="<? echo $reisDeel->RitNummer;?>"/>
+					<?
+						$counter++;
+					}
+					?>
+				</form>
+				</td>
+
+
 				<!-- ROBIN: hier kun je aan de hand van $travelOption en zijn values de ritten vinden (en dus de vrienden) -->
 				<!-- met het uitvoeren van var_dump($travelOption); kun je zien welke values hij heeft -->
 			</tr>
 		<?php
 		}
+	}
+}
+
+if(isset($_POST['plannen'])){
+	$sql = "INSERT INTO trips(uid, tripid, fromStation, toStation) VALUES (859413107430474, $_POST[tripID0], '$_POST[from]', '$_POST[to]')";
+	
+	if (mysqli_query($conn, $sql)) {
+		echo "Trip planned!";
+	} else {
+		echo "Error: " . $sql . "<br>" . mysqli_error($conn);
 	}
 }
 

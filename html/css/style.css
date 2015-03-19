@@ -1,9 +1,13 @@
 body {
-	background-color: #DBE8F9;
+	#background-image: url("../img/iphone_wrapper.png");
+	#background-repeat: no-repeat;
+	background-color: #DAF8F9;
 	font: 11px/24px "Lucida Grande", "Trebuchet MS", Arial, Helvetica, sans-serif;
 	color: #5A698B;
 }
-
+.screen{
+	margin-top: 75px;
+}	
 #title {
 	width: 330px;
 	height: 26px;
