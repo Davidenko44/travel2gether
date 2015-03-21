@@ -4,7 +4,7 @@ $username = "root";
 $password = "social";
 $dbname = "socialweb";
 
-// Create connection
+//Create connection
 $conn = mysqli_connect($servername, $username, $password, $dbname);
 // Check connection
 if (!$conn) {
@@ -27,7 +27,7 @@ if (!$conn) {
 	</script>
 </head>
 
-<body onload="initialize();findRoute();">
+<body onload="initialize();findRoute();showFriendsOnTrip();">
 	<table>
 		<thead>
 			<tr>
@@ -63,10 +63,6 @@ function getStationCodeByName($station) {
 		}
 	}
 	return $result;
-}
-
-function test(){
-	echo "<script>console.log('hi')</script>";
 }
 
 function travelAdvice($from, $to) {
