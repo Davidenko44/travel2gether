@@ -100,9 +100,10 @@ function testAPI() {
          		/* Post the facebook ID's to PHP */
             	$.ajax({
             	    type: "POST",
-            	    url: 'test.php',
+            	    url: 'mysql.php',
             	    dataType: 'json',
             	    data: {
+            	    	functionname: 'saveFriends',
             			facebookId: meId,
             			friendsIds: friendIds
             	    },
