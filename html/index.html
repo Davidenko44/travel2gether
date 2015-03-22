@@ -85,6 +85,7 @@ function testAPI() {
      	console.log('Successful login for: ' + response.name + ', ID: ' + response.id);
      	document.getElementById('status').innerHTML =
        		'Thanks for logging in, ' + response.name + '!';
+     	document.getElementById('facebookId').value = response.id;
      	
      	/* make the API call */
     	FB.api("/me/friends?fields=first_name,last_name,id,picture", function (response) {
@@ -132,6 +133,8 @@ function testAPI() {
 	<div class="row"><label class="col1">To:&nbsp;&nbsp;</label>
 		<span class="col2"><input name="to" class="input" type="text" id="to" size="20" tabindex="2"></span>
 	</div>
+	
+	<input name="facebookId" type="hidden" id="facebookId">
 	
 	<div align="center" class="submit"><input type="image" src="img/b_send.gif" alt="send" width="52" height="19" border="0">
 	</div>

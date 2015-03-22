@@ -4,12 +4,12 @@ $username = "root";
 $password = "social";
 $dbname = "socialweb";
 
-//Create connection
-$conn = mysqli_connect($servername, $username, $password, $dbname);
-// Check connection
-if (!$conn) {
-    die("Connection failed: " . mysqli_connect_error());
-}
+// //Create connection
+// $conn = mysqli_connect($servername, $username, $password, $dbname);
+// // Check connection
+// if (!$conn) {
+//     die("Connection failed: " . mysqli_connect_error());
+// }
 ?>
 
 <!DOCTYPE HTML>
@@ -19,15 +19,40 @@ if (!$conn) {
 	<title>NS train planner</title>
 	<link rel="stylesheet" type="text/css" href="css/style.css">
 	<script src="http://maps.googleapis.com/maps/api/js"></script>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 	<script src="js/visualize.js"></script>
 	<script type="text/javascript">
 		function findRoute() {
 			calcRoute('<?=$_POST['from']?>', '<?=$_POST['to']?>');
 		}
+
+		function saveToSQL() {
+			if('<?=isset($_POST['plannen'])?>') {
+				$.ajax({
+					type: 'POST',
+					url: 'mysql.php',
+					dataType: 'json',
+					data: {
+						functionname: 'saveTrip',
+						facebookId: '<?=$_POST['facebookId']?>',
+						tripId: 'test', // ROBIN, ik krijg de trip ID niet te pakken, kun jij er naar kijken?
+						from: '<?=$_POST['from']?>',
+						to: '<?=$_POST['to']?>'
+					},
+					success: function (obj) {
+	                	if( !('error' in obj) ) {
+	                    	alert(obj.result);
+	                    } else {
+	                    	alert("ERROR: " + obj.error);
+	                    }
+					}
+				});
+			}
+		}
 	</script>
 </head>
 
-<body onload="initialize();findRoute();showFriendsOnTrip();">
+<body onload="saveToSQL();initialize();findRoute();showFriendsOnTrip();">
 	<table>
 		<thead>
 			<tr>
@@ -77,32 +102,20 @@ function travelAdvice($from, $to) {
 	
 	if ($info['http_code'] === 200) {
 		$travelOptions = simplexml_load_string($output) or die("Could not load results");
-		foreach ($travelOptions->ReisMogelijkheid as $travelOption) { ?>
+		foreach ($travelOptions->ReisMogelijkheid as $travelOption) {?>
 			<tr>
-				<td><?php echo $travelOption->AantalOverstappen ?></td>
-				<td><?php echo $travelOption->ActueleReisTijd ?></td>
-				<td><?php echo date_format(date_create($travelOption->ActueleVertrekTijd), 'H:i') ?></td>
-				<td><?php echo date_format(date_create($travelOption->ActueleAankomstTijd), 'H:i') ?></td>
-				<td> 				<?				
-				echo $travelOption->ReisDeel->RitNummer;
-				if(count($travelOption->ReisDeel) > 1){
-					echo $travelOption->ReisDeel[1]->RitNummer;
-				}
-				?> </td>
+				<td><?= $travelOption->AantalOverstappen ?></td>
+				<td><?= $travelOption->ActueleReisTijd ?></td>
+				<td><?= date_format(date_create($travelOption->ActueleVertrekTijd), 'H:i') ?></td>
+				<td><?= date_format(date_create($travelOption->ActueleAankomstTijd), 'H:i') ?></td>
+				<td><?= $travelOption->ReisDeel->RitNummer;?> </td>
 				<td>
 				<form method="POST" action="travel.php">
 					<input type="submit" class="button" name="plannen" id="plannen" value="Plannen"/>
-					<input type="hidden" name="from" id="from" value="<? echo $_POST[from];?>"/>
-					<input type="hidden" name="to" id="to" value="<? echo $_POST['to'];?>"/>
-					<input type="hidden" name="parts" id="parts" value="<? echo $travelOption->AantalOverstappen+1;?>"/>
-					<?
-					$counter = 0;
-					foreach($travelOption->ReisDeel as $reisDeel){?>
-						<input type="hidden" name="tripID<?echo $counter?>" id="tripID<?echo $counter?>" value="<? echo $reisDeel->RitNummer;?>"/>
-					<?
-						$counter++;
-					}
-					?>
+					<input type="hidden" name="from" id="from" value="<?=$_POST['from']?>"/>
+					<input type="hidden" name="to" id="to" value="<?=$_POST['to']?>"/>
+					<input type="hidden" name="facebookId" id="facebookId" value="<?=$_POST['facebookId']?>"/>
+					<input type="hidden" name="parts" id="parts" value="<?=$travelOption->AantalOverstappen+1?>"/>
 				</form>
 				</td>
 			</tr>
@@ -111,15 +124,15 @@ function travelAdvice($from, $to) {
 	}
 }
 
-if(isset($_POST['plannen'])){
-	$sql = "INSERT INTO trips(uid, tripid, fromStation, toStation) VALUES (859413107430474, $_POST[tripID0], '$_POST[from]', '$_POST[to]')";
+// if(isset($_POST['plannen'])){
+// 	$sql = "INSERT INTO trips(uid, tripid, fromStation, toStation) VALUES (859413107430474, $_POST[tripID0], '$_POST[from]', '$_POST[to]')";
 	
-	if (mysqli_query($conn, $sql)) {
-		echo "Trip planned!";
-	} else {
-		echo "Error: " . $sql . "<br>" . mysqli_error($conn);
-	}
-}
+// 	if (mysqli_query($conn, $sql)) {
+// 		echo "Trip planned!";
+// 	} else {
+// 		echo "Error: " . $sql . "<br>" . mysqli_error($conn);
+// 	}
+// }
 
 travelAdvice(getStationCodeByName($_POST['from']), getStationCodeByName($_POST['to']));
 ?>
